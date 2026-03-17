@@ -20,14 +20,40 @@ canvas{
 
 button{
     margin-top:10px;
-    padding:6px 12px;
+    padding:8px 16px;
+    background:#222;
+    color:#eee;
+    border:1px solid #555;
+    border-radius:4px;
+    cursor:pointer;
+    font-size:16px;
+    transition: background 0.2s;
 }
+button:hover{
+    background:#333;
+}
+button:active{
+    background:#111;
+}
+
+p.explanation{
+    max-width:800px;
+    margin:15px auto;
+    font-size:16px;
+    line-height:1.5;
+    color:#ccc;
+}
+
 </style>
 </head>
 
 <body>
 
 <h2>Unit Circle – sin(θ) and cos(θ)</h2>
+<p class="explanation">
+This visualisation shows the X (cos) and Y (sin) components of a point moving around a unit circle.
+Drag the point or start auto-rotation to explore how the sine and cosine relate to the circle.
+</p>
 <canvas id="canvas" width="900" height="520"></canvas>
 <br>
 <button id="toggle">Start rotation</button>
