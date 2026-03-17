@@ -1,35 +1,50 @@
-<!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trigonometric Visualiser</title>
+    <title>Interactive Trig Visualiser</title>
     <style>
-        .circle {
-            fill: lightblue;
-            stroke: black;
-            stroke-width: 2;
-        }
-        .axis {
-            stroke: black;
-            stroke-width: 2;
-        }
-        .value {
-            font-size: 16px;
-            fill: black;
-        }
+        /* Your CSS styles */
     </style>
 </head>
 <body>
-    <svg width="500" height="500">
-        <circle class="circle" cx="250" cy="250" r="200"></circle>
-        <line class="axis" x1="250" y1="50" x2="250" y2="450"></line> <!-- Y-axis -->
-        <line class="axis" x1="50" y1="250" x2="450" y2="250"></line> <!-- X-axis -->
+    <h1>Interactive Trig Visualiser</h1>
+    <canvas id="trigCanvas" width="800" height="600"></canvas>
+    <script>
+        // Setup for the canvas and rendering
+        var canvas = document.getElementById('trigCanvas');
+        var ctx = canvas.getContext('2d');
 
-        <!-- Position indicators for sin and cos -->
-        <text class="value" x="450" y="250" id="cos">cos(θ)</text> <!-- Cosine displayed on the cos axis -->
-        <text class="value" x="250" y="50" id="sin">sin(θ)</text> <!-- Sine displayed on the sin axis -->
-        <text class="value" x="250" y="450" id="angle">θ</text> <!-- Angle position display -->
-    </svg>
+        function drawAxes() {
+            ctx.beginPath();
+            // Draw COS axis
+            ctx.moveTo(100, 300);
+            ctx.lineTo(700, 300);
+            ctx.stroke();
+            // Draw SIN axis
+            ctx.moveTo(300, 100);
+            ctx.lineTo(300, 500);
+            ctx.stroke();
+        }
+
+        function drawCircle() {
+            ctx.beginPath();
+            ctx.arc(300, 300, 200, 0, 2 * Math.PI);
+            ctx.stroke();
+        }
+
+        function repositionValues() {
+            // Logic to reposition the values on the respective axes
+            ctx.fillText('COS', 650, 290);
+            ctx.fillText('SIN', 310, 100);
+        }
+
+        function render() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawCircle();
+            drawAxes();
+            repositionValues();
+        }
+
+        render();
+    </script>
 </body>
 </html>
