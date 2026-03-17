@@ -1,1 +1,166 @@
-<!DOCTYPE html>\n<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>Interactive Trig Visualiser</title>\n    <style>\n        body { font-family: Arial, sans-serif; }\n        canvas { display: block; margin: 20px auto; border: 1px solid black; }\n        #values { text-align: center; margin-top: 10px; }\n    </style>\n</head>\n<body>\n    <canvas id="trigCanvas" width="400" height="400"></canvas>\n    <div id="values">\n        <p>Angle: <span id="angleValue">0</span>°</p>\n        <p>sin: <span id="sinValue">0</span></p>\n        <p>cos: <span id="cosValue">0</span></p>\n    </div>\n    <script>\n        const canvas = document.getElementById('trigCanvas');\n        const ctx = canvas.getContext('2d');\n        const radius = 150;\n        const centerX = canvas.width / 2;\n        const centerY = canvas.height / 2;\n\n        function drawAxes() {\n            // Draw X and Y axes\n            ctx.beginPath();\n            ctx.moveTo(centerX, 0);\n            ctx.lineTo(centerX, canvas.height); // Y-axis\n            ctx.moveTo(0, centerY);\n            ctx.lineTo(canvas.width, centerY); // X-axis\n            ctx.stroke();\n            ctx.closePath();\n        }\n\n        function drawCircle() {\n            ctx.beginPath();\n            ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);\n            ctx.stroke();\n            ctx.closePath();\n        }\n\n        function drawAngle(angle) {\n            const rad = angle * (Math.PI / 180);\n            const sinValue = Math.sin(rad);\n            const cosValue = Math.cos(rad);\n\n            // Clear canvas for redrawing\n            ctx.clearRect(0, 0, canvas.width, canvas.height);\n            drawCircle();\n            drawAxes();\n\n            // Draw angle line\n            ctx.beginPath();\n            ctx.moveTo(centerX, centerY);\n            ctx.lineTo(centerX + radius * cosValue, centerY - radius * sinValue);\n            ctx.stroke();\n            ctx.closePath();\n\n            // Update values\n            document.getElementById('angleValue').textContent = angle;\n            document.getElementById('sinValue').textContent = sinValue.toFixed(2);\n            document.getElementById('cosValue').textContent = cosValue.toFixed(2);\n        }\n\n        let currentAngle = 0;\n        setInterval(() => {\n            currentAngle = (currentAngle + 1) % 360;\n            drawAngle(currentAngle);\n        }, 100);\n    </script>\n</body>\n</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Sin / Cos Unit Circle Visualiser</title>
+
+<style>
+body{
+    background:#111;
+    color:#eee;
+    font-family:sans-serif;
+    text-align:center;
+}
+
+canvas{
+    background:#181818;
+    border:1px solid #444;
+    margin-top:20px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>Unit Circle – sin(θ) and cos(θ)</h2>
+<canvas id="canvas" width="700" height="500"></canvas>
+
+<script>
+
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+const circle = {x:250,y:280};
+const r = 150;
+
+const cosAxisY = 80;
+const sinAxisX = 520;
+
+let angle = 0;
+let dragging=false;
+
+function draw(){
+
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    const cos = Math.cos(angle);
+    const sin = Math.sin(angle);
+
+    const px = circle.x + cos*r;
+    const py = circle.y - sin*r;
+
+    const cosAxisX = circle.x + cos*r;
+    const sinAxisY = circle.y - sin*r;
+
+    // unit circle
+    ctx.beginPath();
+    ctx.arc(circle.x,circle.y,r,0,Math.PI*2);
+    ctx.strokeStyle="#888";
+    ctx.stroke();
+
+    // radius
+    ctx.beginPath();
+    ctx.moveTo(circle.x,circle.y);
+    ctx.lineTo(px,py);
+    ctx.strokeStyle="#aaa";
+    ctx.stroke();
+
+    // circle point
+    ctx.beginPath();
+    ctx.arc(px,py,7,0,Math.PI*2);
+    ctx.fillStyle="#fff";
+    ctx.fill();
+
+    // ---- COS AXIS (top) ----
+
+    ctx.beginPath();
+    ctx.moveTo(circle.x-r,cosAxisY);
+    ctx.lineTo(circle.x+r,cosAxisY);
+    ctx.strokeStyle="#4fc3f7";
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(cosAxisX,cosAxisY,6,0,Math.PI*2);
+    ctx.fillStyle="#4fc3f7";
+    ctx.fill();
+
+    // projection line
+    ctx.beginPath();
+    ctx.moveTo(px,py);
+    ctx.lineTo(cosAxisX,cosAxisY);
+    ctx.strokeStyle="#4fc3f7";
+    ctx.setLineDash([5,5]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // ---- SIN AXIS (right) ----
+
+    ctx.beginPath();
+    ctx.moveTo(sinAxisX,circle.y-r);
+    ctx.lineTo(sinAxisX,circle.y+r);
+    ctx.strokeStyle="#f06292";
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(sinAxisX,sinAxisY,6,0,Math.PI*2);
+    ctx.fillStyle="#f06292";
+    ctx.fill();
+
+    // projection line
+    ctx.beginPath();
+    ctx.moveTo(px,py);
+    ctx.lineTo(sinAxisX,sinAxisY);
+    ctx.strokeStyle="#f06292";
+    ctx.setLineDash([5,5]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // ---- ANGLE ARC ----
+
+    ctx.beginPath();
+    ctx.arc(circle.x,circle.y,40,0,-angle,true);
+    ctx.strokeStyle="#ddd";
+    ctx.stroke();
+
+    // ---- TEXT ----
+
+    ctx.fillStyle="#fff";
+    ctx.font="16px sans-serif";
+
+    const deg = (angle*180/Math.PI).toFixed(1);
+    ctx.fillText("θ = "+deg+"°",circle.x-35,circle.y+5);
+
+    ctx.fillStyle="#4fc3f7";
+    ctx.fillText("cos(θ) = "+cos.toFixed(3),circle.x-60,cosAxisY-15);
+
+    ctx.fillStyle="#f06292";
+    ctx.fillText("sin(θ) = "+sin.toFixed(3),sinAxisX+10,circle.y-r-10);
+}
+
+function setAngleFromMouse(e){
+
+    const rect = canvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left;
+    const my = e.clientY - rect.top;
+
+    angle = Math.atan2(circle.y - my, mx - circle.x);
+    draw();
+}
+
+canvas.addEventListener("mousedown",e=>{
+    dragging=true;
+    setAngleFromMouse(e);
+});
+
+canvas.addEventListener("mousemove",e=>{
+    if(dragging) setAngleFromMouse(e);
+});
+
+canvas.addEventListener("mouseup",()=>dragging=false);
+canvas.addEventListener("mouseleave",()=>dragging=false);
+
+draw();
+
+</script>
+</body>
+</html>
