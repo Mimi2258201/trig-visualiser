@@ -17,6 +17,11 @@ canvas{
     border:1px solid #444;
     margin-top:20px;
 }
+
+button{
+    margin-top:10px;
+    padding:6px 12px;
+}
 </style>
 </head>
 
@@ -24,6 +29,8 @@ canvas{
 
 <h2>Unit Circle – sin(θ) and cos(θ)</h2>
 <canvas id="canvas" width="700" height="500"></canvas>
+<br>
+<button id="toggle">Start rotation</button>
 
 <script>
 
@@ -38,6 +45,13 @@ const sinAxisX = 520;
 
 let angle = 0;
 let dragging=false;
+let rotating=false;
+
+function normalizeDeg(rad){
+    let deg = rad * 180 / Math.PI;
+    deg = ((deg % 360) + 360) % 360;
+    return deg;
+}
 
 function draw(){
 
@@ -52,7 +66,7 @@ function draw(){
     const cosAxisX = circle.x + cos*r;
     const sinAxisY = circle.y - sin*r;
 
-    // unit circle
+    // circle
     ctx.beginPath();
     ctx.arc(circle.x,circle.y,r,0,Math.PI*2);
     ctx.strokeStyle="#888";
@@ -71,8 +85,7 @@ function draw(){
     ctx.fillStyle="#fff";
     ctx.fill();
 
-    // ---- COS AXIS (top) ----
-
+    // cos axis
     ctx.beginPath();
     ctx.moveTo(circle.x-r,cosAxisY);
     ctx.lineTo(circle.x+r,cosAxisY);
@@ -84,17 +97,15 @@ function draw(){
     ctx.fillStyle="#4fc3f7";
     ctx.fill();
 
-    // projection line
     ctx.beginPath();
     ctx.moveTo(px,py);
     ctx.lineTo(cosAxisX,cosAxisY);
-    ctx.strokeStyle="#4fc3f7";
     ctx.setLineDash([5,5]);
+    ctx.strokeStyle="#4fc3f7";
     ctx.stroke();
     ctx.setLineDash([]);
 
-    // ---- SIN AXIS (right) ----
-
+    // sin axis
     ctx.beginPath();
     ctx.moveTo(sinAxisX,circle.y-r);
     ctx.lineTo(sinAxisX,circle.y+r);
@@ -106,29 +117,27 @@ function draw(){
     ctx.fillStyle="#f06292";
     ctx.fill();
 
-    // projection line
     ctx.beginPath();
     ctx.moveTo(px,py);
     ctx.lineTo(sinAxisX,sinAxisY);
-    ctx.strokeStyle="#f06292";
     ctx.setLineDash([5,5]);
+    ctx.strokeStyle="#f06292";
     ctx.stroke();
     ctx.setLineDash([]);
 
-    // ---- ANGLE ARC ----
-
+    // angle arc
     ctx.beginPath();
     ctx.arc(circle.x,circle.y,40,0,-angle,true);
     ctx.strokeStyle="#ddd";
     ctx.stroke();
 
-    // ---- TEXT ----
-
-    ctx.fillStyle="#fff";
+    // labels
     ctx.font="16px sans-serif";
 
-    const deg = (angle*180/Math.PI).toFixed(1);
-    ctx.fillText("θ = "+deg+"°",circle.x-35,circle.y+5);
+    const deg = normalizeDeg(angle);
+
+    ctx.fillStyle="#fff";
+    ctx.fillText("θ = "+deg.toFixed(1)+"°",circle.x-35,circle.y+5);
 
     ctx.fillStyle="#4fc3f7";
     ctx.fillText("cos(θ) = "+cos.toFixed(3),circle.x-60,cosAxisY-15);
@@ -144,7 +153,6 @@ function setAngleFromMouse(e){
     const my = e.clientY - rect.top;
 
     angle = Math.atan2(circle.y - my, mx - circle.x);
-    draw();
 }
 
 canvas.addEventListener("mousedown",e=>{
@@ -159,7 +167,25 @@ canvas.addEventListener("mousemove",e=>{
 canvas.addEventListener("mouseup",()=>dragging=false);
 canvas.addEventListener("mouseleave",()=>dragging=false);
 
-draw();
+document.getElementById("toggle").onclick = () => {
+
+    rotating = !rotating;
+
+    document.getElementById("toggle").textContent =
+        rotating ? "Stop rotation" : "Start rotation";
+};
+
+function loop(){
+
+    if(rotating && !dragging){
+        angle += 0.01;
+    }
+
+    draw();
+    requestAnimationFrame(loop);
+}
+
+loop();
 
 </script>
 </body>
