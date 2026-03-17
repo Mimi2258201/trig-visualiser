@@ -1,163 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Sin / Cos Unit Circle Visualiser</title>
-<style>
-body {
-    font-family: sans-serif;
-    background: #111;
-    color: #eee;
-    text-align: center;
-}
-
-canvas {
-    background: #181818;
-    border: 1px solid #444;
-    margin-top: 20px;
-}
-
-#info {
-    margin-top: 10px;
-    font-size: 18px;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trigonometric Visualiser</title>
+    <style>
+        .circle {
+            fill: lightblue;
+            stroke: black;
+            stroke-width: 2;
+        }
+        .axis {
+            stroke: black;
+            stroke-width: 2;
+        }
+        .value {
+            font-size: 16px;
+            fill: black;
+        }
+    </style>
 </head>
 <body>
+    <svg width="500" height="500">
+        <circle class="circle" cx="250" cy="250" r="200"></circle>
+        <line class="axis" x1="250" y1="50" x2="250" y2="450"></line> <!-- Y-axis -->
+        <line class="axis" x1="50" y1="250" x2="450" y2="250"></line> <!-- X-axis -->
 
-<h2>Unit Circle: sin(θ) and cos(θ)</h2>
-
-<canvas id="canvas" width="600" height="500"></canvas>
-
-<div id="info">
-θ: <span id="angle">0</span>° |
-sin(θ): <span id="sin">0</span> |
-cos(θ): <span id="cos">1</span>
-</div>
-
-<script>
-const canvas = document.getElementById("canvas");
-const ctx = canvas.getContext("2d");
-
-const center = {x:300, y:280};
-const r = 150;
-
-let angle = 0;
-let dragging = false;
-
-function draw(){
-
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-
-    const x = Math.cos(angle);
-    const y = Math.sin(angle);
-
-    const px = center.x + x*r;
-    const py = center.y - y*r;
-
-    const sinY = center.y - y*r;
-    const cosX = center.x + x*r;
-
-    // circle
-    ctx.beginPath();
-    ctx.arc(center.x,center.y,r,0,Math.PI*2);
-    ctx.strokeStyle="#888";
-    ctx.stroke();
-
-    // axes
-    ctx.beginPath();
-    ctx.moveTo(center.x-r-50,center.y);
-    ctx.lineTo(center.x+r+50,center.y);
-    ctx.moveTo(center.x,center.y-r-50);
-    ctx.lineTo(center.x,center.y+r+50);
-    ctx.strokeStyle="#444";
-    ctx.stroke();
-
-    // radius
-    ctx.beginPath();
-    ctx.moveTo(center.x,center.y);
-    ctx.lineTo(px,py);
-    ctx.strokeStyle="#aaa";
-    ctx.stroke();
-
-    // cos projection
-    ctx.beginPath();
-    ctx.moveTo(center.x,center.y);
-    ctx.lineTo(cosX,center.y);
-    ctx.strokeStyle="#4fc3f7";
-    ctx.lineWidth=3;
-    ctx.stroke();
-
-    // sin projection
-    ctx.beginPath();
-    ctx.moveTo(cosX,center.y);
-    ctx.lineTo(px,py);
-    ctx.strokeStyle="#f06292";
-    ctx.lineWidth=3;
-    ctx.stroke();
-
-    ctx.lineWidth=1;
-
-    // circle point
-    ctx.beginPath();
-    ctx.arc(px,py,7,0,Math.PI*2);
-    ctx.fillStyle="#fff";
-    ctx.fill();
-
-    // cos axis point
-    ctx.beginPath();
-    ctx.arc(cosX,center.y,6,0,Math.PI*2);
-    ctx.fillStyle="#4fc3f7";
-    ctx.fill();
-
-    // sin axis point
-    ctx.beginPath();
-    ctx.arc(center.x,py,6,0,Math.PI*2);
-    ctx.fillStyle="#f06292";
-    ctx.fill();
-
-    // update text
-    document.getElementById("angle").textContent =
-        (angle*180/Math.PI).toFixed(1);
-
-    document.getElementById("sin").textContent =
-        y.toFixed(3);
-
-    document.getElementById("cos").textContent =
-        x.toFixed(3);
-}
-
-function setAngleFromMouse(e){
-
-    const rect = canvas.getBoundingClientRect();
-
-    const mx = e.clientX - rect.left;
-    const my = e.clientY - rect.top;
-
-    angle = Math.atan2(center.y - my, mx - center.x);
-
-    draw();
-}
-
-canvas.addEventListener("mousedown", e=>{
-    dragging=true;
-    setAngleFromMouse(e);
-});
-
-canvas.addEventListener("mousemove", e=>{
-    if(dragging) setAngleFromMouse(e);
-});
-
-canvas.addEventListener("mouseup", ()=>{
-    dragging=false;
-});
-
-canvas.addEventListener("mouseleave", ()=>{
-    dragging=false;
-});
-
-draw();
-</script>
-
+        <!-- Position indicators for sin and cos -->
+        <text class="value" x="450" y="250" id="cos">cos(θ)</text> <!-- Cosine displayed on the cos axis -->
+        <text class="value" x="250" y="50" id="sin">sin(θ)</text> <!-- Sine displayed on the sin axis -->
+        <text class="value" x="250" y="450" id="angle">θ</text> <!-- Angle position display -->
+    </svg>
 </body>
 </html>
